@@ -381,6 +381,15 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_mutex_resilience_on_failure() {
+        {
+            let _guard = LLAMA.lock().await;
+            assert!(LLAMA.try_lock().is_err());
+        }
+        let _guard = LLAMA.lock().await;
+    }
+
+    #[tokio::test]
     async fn test_auto_unload_trigger() {
         MODEL_LOADED.store(true, Ordering::Release);
         {
